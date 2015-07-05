@@ -5,17 +5,18 @@ def calculate_total(cards)
   arr = cards.map {|e| e[0]}
   total = 0
   arr.each do |value|
-    if value == 'J' || value == 'Q' || value == 'K'
+    if value == 'A'
+      total = total + 11
+    elsif value.to_i == 0 # for 'J', 'Q', 'K'
       total = total + 10
-    # Correct for Aces
-    elsif value == 'A'
-      if (total + 11) > 21
-        total = total + 1
-      else
-        total = total + 11
-      end
     else
       total = total + value.to_i
+    end
+  end
+  # Correct for Aces
+  arr.select{|e| e == 'A'}.count.times do
+    if total > 21
+      total = total - 10
     end
   end
   return total
@@ -73,14 +74,17 @@ end
 while player_total < 21
   puts "Press (1) if you'd like to 'hit', or (2) if you want to 'stay':"
   hit_or_stay = gets.chomp
+  system 'clear'
   if hit_or_stay == '2'
     puts "You chose to stay."
+    puts ""
     break
   else
     new_card = deck.pop
     player_cards << new_card
     player_total = calculate_total(player_cards)
     puts "#{player} is dealt a #{new_card}."
+    puts "#{player}'s hand: #{player_cards}."
     puts "#{player}'s total: #{player_total}"
     puts ""
     puts "Dealer's total: #{dealer_total}"
@@ -91,7 +95,6 @@ while player_total < 21
       puts "Sorry #{player}, you busted!"
       exit
     else
-      puts "#{player}'s hand: #{player_cards}"
       puts ""
     end
   end
@@ -105,6 +108,7 @@ while dealer_total < 17
   dealer_total = calculate_total(dealer_cards)
   puts "Dealer is dealt a #{new_card}"
   puts "Dealer's total: #{dealer_total}"
+  puts ""
   if dealer_total == 21
     puts "Dealer got blackjack. You lose, #{player}."
     exit
@@ -122,8 +126,10 @@ player_total = calculate_total(player_cards)
 dealer_total = calculate_total(dealer_cards)
 puts "#{player}'s hand: #{player_cards}"
 puts "#{player}'s total: #{player_total}"
+puts ""
 puts "Dealer's hand: #{dealer_cards}"
 puts "Dealer's total: #{dealer_total}"
+puts ""
 
 if player_total > dealer_total
   puts "Congratulations, you win!"
@@ -132,7 +138,4 @@ elsif dealer_total > player_total
 else
   puts "Ugh, it's a tie!"
 end
-
-
-
 
